@@ -134,4 +134,17 @@ public class RedisService {
             retunToPool(jedis);
         }
     }
+
+    public boolean delete(MiaoshaUserKey prefix, String key) {
+        Jedis jedis=null;
+        try{
+            jedis=jedisPool.getResource();
+            //生成真正的key
+            String realKey=prefix.getPrefix()+key;
+            long result= jedis.del(realKey);
+            return result>0;
+        }finally {
+            retunToPool(jedis);
+        }
+    }
 }
