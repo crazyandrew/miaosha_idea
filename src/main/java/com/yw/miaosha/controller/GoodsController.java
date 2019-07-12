@@ -4,8 +4,10 @@ import com.yw.miaosha.domain.MiaoshaUser;
 import com.yw.miaosha.redis.GoodsKey;
 import com.yw.miaosha.redis.MiaoshaUserKey;
 import com.yw.miaosha.redis.RedisService;
+import com.yw.miaosha.result.Result;
 import com.yw.miaosha.service.GoodsService;
 import com.yw.miaosha.service.MiaoshaUserService;
+import com.yw.miaosha.vo.GoodsDetailVo;
 import com.yw.miaosha.vo.GoodsVo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,13 +98,12 @@ public class GoodsController {
         return html;
     }
 
-    @RequestMapping("to_detail/{goodsId}")
-    public String toGoodsDetail(Model model, MiaoshaUser user,
-                                @PathVariable(value = "goodsId")long goodsId){
+    @RequestMapping("detail/{goodsId}")
+    @ResponseBody
+    public Result<GoodsDetailVo>  goodsDetail(Model model, MiaoshaUser user,
+                                              @PathVariable(value = "goodsId")long goodsId){
 
         GoodsVo goods=goodsService.getGoodsVoByGoodsId(goodsId);
-        model.addAttribute("goods",goods);
-        model.addAttribute("user",user);
         long startAt=goods.getStartDate().getTime();
         long endAt=goods.getEndDate().getTime();
         long now=System.currentTimeMillis();
@@ -118,9 +119,12 @@ public class GoodsController {
             miaoshaStatus = 1;
             remainSeconds = 0;
         }
-        model.addAttribute("miaoshaStatus", miaoshaStatus);
-        model.addAttribute("remainSeconds", remainSeconds);
-        return "goods_detail";
+        GoodsDetailVo vo=new GoodsDetailVo();
+        vo.setGoods(goods);
+        vo.setUser(user);
+        vo.setRemainSeconds(remainSeconds);
+        vo.setMiaoshaStatus(miaoshaStatus);
+        return Result.success(vo);
     }
 
 

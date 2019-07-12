@@ -41,4 +41,8 @@ public class OrderService {
         return orderInfo;
 
     }
+
+    public OrderInfo getOrderById(long orderId) {
+        return orderDao.getOrderById(orderId);
+    }
 }
